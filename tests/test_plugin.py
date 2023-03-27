@@ -644,4 +644,4 @@ async def test_sqml_predict_batch(
     predictions = json.loads(rows[0]["predictions"])
     assert len(predictions) == count_rows
     for pred in predictions:
-        assert isinstance(pred, int if prediction_type == "classification" else float)
+        assert isinstance(pred, float)
