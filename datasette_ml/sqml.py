@@ -4,6 +4,7 @@ import pickle
 import sqlite3
 import sys
 import textwrap
+import typing as t
 import numpy as np
 import pandas as pd
 import sklearn
@@ -96,7 +97,7 @@ class SQML:
 
     def train(
         self,
-        experiment: str,
+        experiment_name: str,
         prediction_type: str,
         algorithm: str,
         dataset: str,
@@ -161,7 +162,14 @@ class SQML:
                 }
             )
 
-        experiment_id = self.get_or_create_experiment(experiment, prediction_type)
+        experiment = self.get_or_create_experiment(experiment_name, prediction_type)
+        experiment_id = experiment["id"]
+        if experiment["prediction_type"] != prediction_type:
+            return json.dumps(
+                {
+                    "error": f"Existing experiment {experiment} has a prediction type of '{prediction_type}'"
+                }
+            )
 
         with self.conn:
             run = self.conn.execute(
@@ -190,6 +198,7 @@ class SQML:
         estimator = AlgorithmHandler()
         estimator.fit(X_train, y_train)
         y_pred = estimator.predict(X_test)
+        # score = estimator.score(X_test)
 
         model_metrics = {}
         if prediction_type == "classification":
@@ -291,15 +300,16 @@ class SQML:
             }
         )
 
-    def predict(self, experiment: str, features: str) -> float:
+    def predict(self, experiment_name: str, features: str) -> float:
         feature_array = pd.DataFrame([json.loads(features)])
 
         experiment = self.conn.execute(
             """
-            SELECT * FROM sqml_experiments
+            SELECT *
+            FROM sqml_experiments
             WHERE name = ?
             """,
-            (experiment,),
+            (experiment_name,),
         ).fetchone()
         experiment_id = experiment["id"]
 
@@ -321,15 +331,16 @@ class SQML:
         predictions = model.predict(feature_array)
         return float(predictions[0])
 
-    def predict_batch(self, experiment: str, features: str) -> str:
+    def predict_batch(self, experiment_name: str, features: str) -> str:
         feature_matrix = pd.DataFrame(json.loads(features))
 
         experiment = self.conn.execute(
             """
-            SELECT * FROM sqml_experiments
+            SELECT *
+            FROM sqml_experiments
             WHERE name = ?
             """,
-            (experiment,),
+            (experiment_name,),
         ).fetchone()
         experiment_id = experiment["id"]
 
@@ -352,7 +363,9 @@ class SQML:
 
         return json.dumps(predictions.tolist())
 
-    def get_or_create_experiment(self, name: str, prediction_type: str) -> int:
+    def get_or_create_experiment(
+        self, name: str, prediction_type: str
+    ) -> dict[str, t.Any]:
         with self.conn:
             experiment = self.conn.execute(
                 """
@@ -372,4 +385,4 @@ class SQML:
                     (name, prediction_type),
                 ).fetchone()
 
-        return experiment["id"]
+        return experiment

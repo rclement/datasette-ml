@@ -321,6 +321,47 @@ async def test_sqml_train_existing_experiment(
 
 
 @pytest.mark.asyncio
+async def test_sqml_train_existing_experiment_wrong_prediction_type(
+    datasette: Datasette, faker: Faker
+) -> None:
+    experiment_name = faker.bs()
+    prediction_type = "regression"
+    algorithm = "linear_regression"
+    dataset = f"data_{prediction_type}"
+    target = "target"
+    query = f"""
+        SELECT sqml_train(
+            '{experiment_name}',
+            '{prediction_type}',
+            '{algorithm}',
+            '{dataset}',
+            '{target}'
+        ) AS info;
+        """
+    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    assert response.status_code == 200
+
+    prediction_type = "classification"
+    query = f"""
+        SELECT sqml_train(
+            '{experiment_name}',
+            '{prediction_type}',
+            '{algorithm}',
+            '{dataset}',
+            '{target}'
+        ) AS info;
+        """
+    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    assert response.status_code == 200
+
+    rows = response.json()
+    assert len(rows) == 1
+
+    info = json.loads(rows[0]["info"])
+    assert "error" in info.keys()
+
+
+@pytest.mark.asyncio
 async def test_sqml_train_unknown_prediction_type(
     datasette: Datasette, faker: Faker
 ) -> None:
@@ -459,13 +500,18 @@ async def test_sqml_train_unknown_split_strategy(
 
 
 @pytest.mark.asyncio
-async def test_sqml_train_negatve_test_size(datasette: Datasette, faker: Faker) -> None:
+@pytest.mark.parametrize(
+    "test_size",
+    [-0.25, 1.1],
+)
+async def test_sqml_train_out_of_range_test_size(
+    datasette: Datasette, faker: Faker, test_size: float
+) -> None:
     experiment_name = faker.bs()
     prediction_type = "regression"
     algorithm = "linear_regression"
     dataset = f"data_{prediction_type}"
     target = "target"
-    test_size = -0.25
     split_strategy = "shuffle"
     query = f"""
         SELECT sqml_train(
@@ -486,6 +532,9 @@ async def test_sqml_train_negatve_test_size(datasette: Datasette, faker: Faker) 
 
     info = json.loads(rows[0]["info"])
     assert "error" in info.keys()
+
+
+# ------------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
@@ -540,6 +589,9 @@ async def test_sqml_predict(
 
     prediction = rows[0]["prediction"]
     assert isinstance(prediction, float)
+
+
+# ------------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
