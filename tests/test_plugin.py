@@ -275,6 +275,49 @@ async def test_sqml_train(
 
 
 @pytest.mark.asyncio
+async def test_sqml_train_worse_model(datasette: Datasette, faker: Faker) -> None:
+    experiment_name = faker.bs()
+    prediction_type = "regression"
+    algorithm = "svr"
+    dataset = f"data_{prediction_type}"
+    target = "target"
+    query = f"""
+        SELECT sqml_train(
+            '{experiment_name}',
+            '{prediction_type}',
+            '{algorithm}',
+            '{dataset}',
+            '{target}'
+        ) AS info;
+        """
+    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    assert response.status_code == 200
+
+    algorithm = "linear_regression"
+    query = f"""
+        SELECT sqml_train(
+            '{experiment_name}',
+            '{prediction_type}',
+            '{algorithm}',
+            '{dataset}',
+            '{target}'
+        ) AS info;
+        """
+    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    assert response.status_code == 200
+
+    db: Database = datasette.get_database("sqml")
+
+    runs = (await db.execute("SELECT * FROM sqml_runs ORDER BY id")).rows
+    assert len(runs) == 2
+
+    deployments = (await db.execute("SELECT * FROM sqml_deployments ORDER BY id")).rows
+    assert len(deployments) == 1
+    assert deployments[0]["active"]
+    assert deployments[0]["model_id"] == 1
+
+
+@pytest.mark.asyncio
 async def test_sqml_train_existing_experiment(
     datasette: Datasette, faker: Faker
 ) -> None:

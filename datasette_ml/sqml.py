@@ -198,7 +198,7 @@ class SQML:
         estimator = AlgorithmHandler()
         estimator.fit(X_train, y_train)
         y_pred = estimator.predict(X_test)
-        # score = estimator.score(X_test)
+        # score = estimator.score(X_test, y_test)
 
         model_metrics = {}
         if prediction_type == "classification":
