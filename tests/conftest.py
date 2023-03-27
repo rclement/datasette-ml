@@ -6,7 +6,6 @@ import sqlite_utils
 
 from pathlib import Path
 from datasette.app import Datasette
-from faker import Faker
 from sklearn.datasets import make_classification, make_regression
 
 
