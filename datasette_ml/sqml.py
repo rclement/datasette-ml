@@ -37,7 +37,7 @@ class SQML:
     def sklearn_version(self) -> str:
         return sklearn.__version__
 
-    def load_dataset(self, name: str, table: str | None = None) -> str:
+    def load_dataset(self, name: str, table: t.Optional[str] = None) -> str:
         mapping = {
             "iris": datasets.load_iris,
             "digits": datasets.load_digits,
@@ -365,7 +365,7 @@ class SQML:
 
     def get_or_create_experiment(
         self, name: str, prediction_type: str
-    ) -> dict[str, t.Any]:
+    ) -> t.Mapping[str, t.Any]:
         with self.conn:
             experiment = self.conn.execute(
                 """

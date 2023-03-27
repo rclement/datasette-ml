@@ -34,10 +34,10 @@ def sqml_db(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 
 @pytest.fixture(scope="session")
-def datasette_metadata() -> dict[str, t.Any]:
+def datasette_metadata() -> t.Mapping[str, t.Any]:
     return {"plugins": {"datasette-ml": {"db": "sqml"}}}
 
 
 @pytest.fixture(scope="function")
-def datasette(sqml_db: Path, datasette_metadata: dict[str, t.Any]) -> Datasette:
+def datasette(sqml_db: Path, datasette_metadata: t.Mapping[str, t.Any]) -> Datasette:
     return Datasette([str(sqml_db)], metadata=datasette_metadata)
