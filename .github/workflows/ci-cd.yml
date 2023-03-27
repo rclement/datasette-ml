@@ -1,0 +1,73 @@
+name: CI/CD
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Cache Python modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade poetry
+          poetry install
+      - name: Run linting
+        run: |
+          poetry run black --check datasette_ml tests
+          poetry run flake8 datasette_ml tests
+          poetry run mypy datasette_ml tests
+      - name: Run tests
+        run: |
+          poetry run pytest -v --cov=datasette_ml --cov=tests --cov-branch --cov-report=term-missing tests
+          poetry run coverage xml
+      # - name: Publish code coverage to Codecov
+      #   uses: codecov/codecov-action@v3
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     file: ./coverage.xml
+
+  publish-package:
+    runs-on: ubuntu-latest
+    needs: [test]
+    if: contains(github.ref, 'tags')
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - uses: actions/cache@v3
+        name: Configure pip caching
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-publish-pip-${{ hashFiles('**/setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-publish-pip-
+      - name: Install dependencies
+        run: |
+          pip install setuptools wheel twine
+      - name: Publish package on PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          python setup.py sdist bdist_wheel
+          twine upload dist/*
