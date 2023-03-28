@@ -15,7 +15,9 @@ if t.TYPE_CHECKING:  # pragma: no cover
 @hookimpl
 def startup(datasette: "Datasette") -> t.Callable[[], t.Coroutine[t.Any, t.Any, None]]:
     async def init() -> None:
-        db: Database = datasette.get_database("sqml")
+        config = datasette.plugin_config("datasette-ml") or {}
+        db_name = config.get("db", "sqml")
+        db: Database = datasette.get_database(db_name)
         schema_sql = (Path(__file__).parent / "sql" / "schema.sql").read_text()
         await db.execute_write_script(schema_sql)
 

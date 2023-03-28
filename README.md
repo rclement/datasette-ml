@@ -30,7 +30,7 @@ Define dashboards within `metadata.yml` / `metadata.json`:
 ```yaml
 plugins:
   datasette-ml:
-    db: sqml.db
+    db: sqml
 ```
 
 A new menu entry is now available, pointing at `/-/ml` to access the MLOps dashboard.

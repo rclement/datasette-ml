@@ -1,8 +1,11 @@
+import copy
 import json
 import sys
+import typing as t
 import sklearn
 import pytest
 
+from pathlib import Path
 from datasette.app import Datasette
 from datasette.database import Database
 from faker import Faker
@@ -75,6 +78,30 @@ async def test_plugin_registered_sql_function(
 
     available_sql_functions = {f["name"] for f in response.json()}
     assert sql_function in available_sql_functions
+
+
+@pytest.mark.asyncio
+async def test_plugin_default_database(
+    sqml_db: Path, datasette_metadata: t.Mapping[str, t.Any]
+) -> None:
+    metadata = copy.deepcopy(datasette_metadata)
+    metadata["plugins"].pop("datasette-ml")
+    datasette = Datasette([str(sqml_db)], metadata=metadata)
+
+    response = await datasette.client.get("/sqml.json")
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_plugin_unknown_database(
+    sqml_db: Path, datasette_metadata: t.Mapping[str, t.Any]
+) -> None:
+    metadata = copy.deepcopy(datasette_metadata)
+    metadata["plugins"]["datasette-ml"]["db"] = "unknown"
+    datasette = Datasette([str(sqml_db)], metadata=metadata)
+
+    with pytest.raises(KeyError):
+        await datasette.invoke_startup()
 
 
 # ------------------------------------------------------------------------------
