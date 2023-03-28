@@ -784,3 +784,56 @@ async def test_sqml_predict_batch(
     assert len(predictions) == count_rows
     for pred in predictions:
         assert isinstance(pred, float)
+
+
+@pytest.mark.asyncio
+async def test_sqml_predict_batch_unknown_experiment(
+    datasette: Datasette, faker: Faker
+) -> None:
+    experiment_name = faker.bs()
+    query = f"""
+        SELECT sqml_predict_batch(
+            '{experiment_name}',
+            '[]'
+        ) AS prediction;
+        """
+    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    assert response.status_code == 200
+
+    rows = response.json()
+    assert len(rows) == 1
+
+    info = json.loads(rows[0]["prediction"])
+    assert "error" in info.keys()
+
+
+@pytest.mark.asyncio
+async def test_sqml_predict_batch_no_deployment(
+    datasette: Datasette, faker: Faker
+) -> None:
+    experiment_name = faker.bs()
+
+    db: Database = datasette.get_database("sqml")
+    await datasette.invoke_startup()
+    await db.execute_write(
+        """
+        INSERT INTO sqml_experiments(name, prediction_type)
+        VALUES (?, ?)
+        """,
+        (experiment_name, "classification"),
+    )
+
+    query = f"""
+        SELECT sqml_predict_batch(
+            '{experiment_name}',
+            '[]'
+        ) AS prediction;
+        """
+    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    assert response.status_code == 200
+
+    rows = response.json()
+    assert len(rows) == 1
+
+    info = json.loads(rows[0]["prediction"])
+    assert "error" in info.keys()

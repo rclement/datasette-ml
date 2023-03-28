@@ -352,6 +352,10 @@ class SQML:
             """,
             (experiment_name,),
         ).fetchone()
+
+        if experiment is None:
+            return json.dumps({"error": f"Unknown experiment '{experiment_name}'"})
+
         experiment_id = experiment["id"]
 
         deployment = self.conn.execute(
@@ -367,6 +371,13 @@ class SQML:
             """,
             (experiment_id,),
         ).fetchone()
+
+        if deployment is None:
+            return json.dumps(
+                {
+                    "error": f"No deployment found for experiment '{experiment_name}'. Model must be trained successfully before running predictions"
+                }
+            )
 
         model = pickle.loads(deployment["data"])
         predictions = model.predict(feature_matrix)
