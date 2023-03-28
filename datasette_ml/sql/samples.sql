@@ -100,14 +100,10 @@ FROM
           'Iris prediction',
           json_group_array(
             json_object(
-              'sepal length (cm)',
-              [sepal length (cm)],
-              'sepal width (cm)',
-              [sepal width (cm)],
-              'petal length (cm)',
-              [petal length (cm)],
-              'petal width (cm)',
-              [petal width (cm)]
+              'sepal length (cm)', [sepal length (cm)],
+              'sepal width (cm)', [sepal width (cm)],
+              'petal length (cm)', [petal length (cm)],
+              'petal width (cm)', [petal width (cm)]
             )
           )
         )
