@@ -260,6 +260,7 @@ class SQML:
             current_score = (
                 current_deployment["score"] if current_deployment else initial_score
             )
+            deployed = False
 
             if score > current_score:
                 deployment = self.conn.execute(
@@ -281,6 +282,8 @@ class SQML:
                     dict(deployment_id=deployment_id, experiment_id=experiment_id),
                 )
 
+                deployed = True
+
             self.conn.execute(
                 """
                 UPDATE sqml_runs
@@ -292,10 +295,11 @@ class SQML:
 
         return json.dumps(
             {
-                "experiment_id": experiment_id,
-                "run_id": run_id,
-                "model_id": model_id,
-                "deployment_id": deployment_id,
+                "experiment_name": experiment_name,
+                "prediction_type": prediction_type,
+                "algorithm": algorithm,
+                "deployed": deployed,
+                "score": score,
             }
         )
 

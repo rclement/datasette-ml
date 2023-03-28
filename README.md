@@ -89,18 +89,17 @@ It will return the following data:
 
 | training |
 | --- |
-| {"experiment_id": 1, "run_id": 1, "model_id": 1, "deployment_id": 1} |
-
-TODO: return experiment name, algorithm name and training metrics instead of ids!
+| {"experiment_name": "Iris prediction", "prediction_type": "classification", "algorithm": "logistic_regression", "deployed": true, "score": 0.9473684210526315} |
 
 We have just trained our first machine learning model! The output data informs us
-that our model has been trained and deployed and is ready to be used.
+that our model has been trained, yields a score of 0.94 and has been deployed.
 
 ### Performing predictions
 
 Now that we have trained our classifier, let's use it to make predictions!
 
-Predict the class for the first row of `dataset_iris`:
+Predict the target label for the first row of `dataset_iris` using the
+`sqml_predict` function:
 
 ```sql
 SELECT
@@ -166,9 +165,8 @@ This will yield the following output data:
 | 6.7 | 3.0 | 5.0 | 1.7 | 1.0 | 2.0 | 0 |
 | 6.0 | 2.7 | 5.1 | 1.6 | 1.0 | 2.0 | 0 |
 | 4.9 | 2.5 | 4.5 | 1.7 | 2.0 | 1.0 | 0 |
-| 6.0 | 2.2 | 5.0 | 1.5 | 2.0 | 1.0 | 0 |
 
-Oh no! 5 predictions have not predicted the correct target label!
+Oh no! 4 predictions have not predicted the correct target label!
 
 Let's see if we can train a better algorithm to enhance the prediction quality.
 
@@ -191,7 +189,11 @@ This will yield the following data:
 
 | training |
 | --- |
-| {"experiment_id": 1, "run_id": 2, "model_id": 2, "deployment_id": 2} |
+| {"experiment_name": "Iris prediction", "prediction_type": "classification", "algorithm": "svc", "deployed": true, "score": 0.9736842105263158} |
+
+We can already see that the score of this new model is higher than the previous one and it has been deployed.
+
+Let's try our new classifier on the same dataset:
 
 ```sql
 SELECT
@@ -228,7 +230,6 @@ This will lead the following results:
 | 5.9 | 3.2 | 4.8 | 1.8 | 1.0 | 2.0 | 0 |
 | 6.7 | 3.0 | 5.0 | 1.7 | 1.0 | 2.0 | 0 |
 | 6.0 | 2.7 | 5.1 | 1.6 | 1.0 | 2.0 | 0 |
-| 6.3 | 2.8 | 5.1 | 1.5 | 2.0 | 1.0 | 0 |
 
 Yay! We manage to predict one more target label with this new model!
 

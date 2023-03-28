@@ -205,7 +205,7 @@ async def test_sqml_train(
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -213,17 +213,22 @@ async def test_sqml_train(
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["info"])
+    training = json.loads(rows[0]["training"])
     db: Database = datasette.get_database("sqml")
+
+    assert training["experiment_name"] == experiment_name
+    assert training["prediction_type"] == prediction_type
+    assert training["algorithm"] == algorithm
+    assert training["deployed"]
+    assert isinstance(training["score"], float)
 
     experiment = (
         await db.execute(
             """
             SELECT *
             FROM sqml_experiments
-            WHERE id = ?
+            WHERE id = 1
             """,
-            (info["experiment_id"],),
         )
     ).rows[0]
     assert experiment["name"] == experiment_name
@@ -234,9 +239,8 @@ async def test_sqml_train(
             """
             SELECT *
             FROM sqml_runs
-            WHERE id = ?
+            WHERE id = 1
             """,
-            (info["run_id"],),
         )
     ).rows[0]
     assert run["status"] == "success"
@@ -245,19 +249,18 @@ async def test_sqml_train(
     assert run["target"] == target
     assert run["test_size"] == 0.25
     assert run["split_strategy"] == "shuffle"
-    assert run["experiment_id"] == info["experiment_id"]
+    assert run["experiment_id"] == 1
 
     model = (
         await db.execute(
             """
             SELECT *
             FROM sqml_models
-            WHERE id = ?
+            WHERE id = 1
             """,
-            (info["model_id"],),
         )
     ).rows[0]
-    assert model["run_id"] == info["run_id"]
+    assert model["run_id"] == 1
     assert model["library"] == "scikit-learn"
     assert isinstance(model["data"], bytes) and len(model["data"]) > 0
 
@@ -268,9 +271,8 @@ async def test_sqml_train(
                 """
                 SELECT *
                 FROM sqml_metrics
-                WHERE model_id = ?
+                WHERE model_id = 1
                 """,
-                (info["model_id"],),
             )
         ).rows
     }
@@ -295,13 +297,12 @@ async def test_sqml_train(
             """
             SELECT *
             FROM sqml_deployments
-            WHERE id = ?
+            WHERE id = 1
             """,
-            (info["deployment_id"],),
         )
     ).rows[0]
-    assert deployment["experiment_id"] == info["experiment_id"]
-    assert deployment["model_id"] == info["model_id"]
+    assert deployment["experiment_id"] == 1
+    assert deployment["model_id"] == 1
     assert deployment["active"]
 
 
@@ -321,7 +322,7 @@ async def test_sqml_train_better_model(datasette: Datasette, faker: Faker) -> No
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -336,6 +337,12 @@ async def test_sqml_train_better_model(datasette: Datasette, faker: Faker) -> No
 
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
+
+    rows = response.json()
+    assert len(rows) == 1
+
+    training = json.loads(rows[0]["training"])
+    assert training["deployed"]
 
     runs = (await db.execute("SELECT * FROM sqml_runs ORDER BY id")).rows
     assert len(runs) == 2
@@ -364,7 +371,7 @@ async def test_sqml_train_worse_model(datasette: Datasette, faker: Faker) -> Non
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -379,6 +386,12 @@ async def test_sqml_train_worse_model(datasette: Datasette, faker: Faker) -> Non
 
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
+
+    rows = response.json()
+    assert len(rows) == 1
+
+    training = json.loads(rows[0]["training"])
+    assert not training["deployed"]
 
     runs = (await db.execute("SELECT * FROM sqml_runs ORDER BY id")).rows
     assert len(runs) == 2
@@ -405,7 +418,7 @@ async def test_sqml_train_existing_experiment(
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -451,7 +464,7 @@ async def test_sqml_train_existing_experiment_wrong_prediction_type(
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -464,7 +477,7 @@ async def test_sqml_train_existing_experiment_wrong_prediction_type(
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -472,8 +485,8 @@ async def test_sqml_train_existing_experiment_wrong_prediction_type(
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["info"])
-    assert "error" in info.keys()
+    training = json.loads(rows[0]["training"])
+    assert "error" in training.keys()
 
 
 @pytest.mark.asyncio
@@ -492,7 +505,7 @@ async def test_sqml_train_unknown_prediction_type(
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -500,8 +513,8 @@ async def test_sqml_train_unknown_prediction_type(
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["info"])
-    assert "error" in info.keys()
+    training = json.loads(rows[0]["training"])
+    assert "error" in training.keys()
 
 
 @pytest.mark.asyncio
@@ -518,7 +531,7 @@ async def test_sqml_train_unknown_algorithm(datasette: Datasette, faker: Faker) 
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -526,8 +539,8 @@ async def test_sqml_train_unknown_algorithm(datasette: Datasette, faker: Faker) 
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["info"])
-    assert "error" in info.keys()
+    training = json.loads(rows[0]["training"])
+    assert "error" in training.keys()
 
 
 @pytest.mark.asyncio
@@ -544,7 +557,7 @@ async def test_sqml_train_unknown_dataset(datasette: Datasette, faker: Faker) ->
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -552,8 +565,8 @@ async def test_sqml_train_unknown_dataset(datasette: Datasette, faker: Faker) ->
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["info"])
-    assert "error" in info.keys()
+    training = json.loads(rows[0]["training"])
+    assert "error" in training.keys()
 
 
 @pytest.mark.asyncio
@@ -570,7 +583,7 @@ async def test_sqml_train_unknown_target(datasette: Datasette, faker: Faker) -> 
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -578,8 +591,8 @@ async def test_sqml_train_unknown_target(datasette: Datasette, faker: Faker) -> 
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["info"])
-    assert "error" in info.keys()
+    training = json.loads(rows[0]["training"])
+    assert "error" in training.keys()
 
 
 @pytest.mark.asyncio
@@ -602,7 +615,7 @@ async def test_sqml_train_unknown_split_strategy(
             '{target}',
             {test_size},
             '{split_strategy}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -610,8 +623,8 @@ async def test_sqml_train_unknown_split_strategy(
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["info"])
-    assert "error" in info.keys()
+    training = json.loads(rows[0]["training"])
+    assert "error" in training.keys()
 
 
 @pytest.mark.asyncio
@@ -637,7 +650,7 @@ async def test_sqml_train_out_of_range_test_size(
             '{target}',
             {test_size},
             '{split_strategy}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -645,8 +658,8 @@ async def test_sqml_train_out_of_range_test_size(
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["info"])
-    assert "error" in info.keys()
+    training = json.loads(rows[0]["training"])
+    assert "error" in training.keys()
 
 
 # ------------------------------------------------------------------------------
@@ -673,7 +686,7 @@ async def test_sqml_predict(
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -723,8 +736,8 @@ async def test_sqml_predict_unknown_experiment(
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["prediction"])
-    assert "error" in info.keys()
+    prediction = json.loads(rows[0]["prediction"])
+    assert "error" in prediction.keys()
 
 
 @pytest.mark.asyncio
@@ -753,8 +766,8 @@ async def test_sqml_predict_no_deployment(datasette: Datasette, faker: Faker) ->
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["prediction"])
-    assert "error" in info.keys()
+    prediction = json.loads(rows[0]["prediction"])
+    assert "error" in prediction.keys()
 
 
 # ------------------------------------------------------------------------------
@@ -781,7 +794,7 @@ async def test_sqml_predict_batch(
             '{algorithm}',
             '{dataset}',
             '{target}'
-        ) AS info;
+        ) AS training;
         """
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
@@ -830,8 +843,8 @@ async def test_sqml_predict_batch_unknown_experiment(
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["prediction"])
-    assert "error" in info.keys()
+    prediction = json.loads(rows[0]["prediction"])
+    assert "error" in prediction.keys()
 
 
 @pytest.mark.asyncio
@@ -862,5 +875,5 @@ async def test_sqml_predict_batch_no_deployment(
     rows = response.json()
     assert len(rows) == 1
 
-    info = json.loads(rows[0]["prediction"])
-    assert "error" in info.keys()
+    prediction = json.loads(rows[0]["prediction"])
+    assert "error" in prediction.keys()
