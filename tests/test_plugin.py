@@ -279,10 +279,12 @@ async def test_sqml_train(
 
 
 @pytest.mark.asyncio
-async def test_sqml_train_worse_model(datasette: Datasette, faker: Faker) -> None:
+async def test_sqml_train_better_model(datasette: Datasette, faker: Faker) -> None:
+    db: Database = datasette.get_database("sqml")
+
     experiment_name = faker.bs()
     prediction_type = "regression"
-    algorithm = "svr"
+    algorithm = "linear_regression"
     dataset = f"data_{prediction_type}"
     target = "target"
     query = f"""
@@ -297,7 +299,37 @@ async def test_sqml_train_worse_model(datasette: Datasette, faker: Faker) -> Non
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
 
+    await db.execute_write(
+        """
+        UPDATE sqml_metrics
+        SET value = 0.5
+        WHERE id = 1 AND name = 'score'
+        """
+    )
+
+    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    assert response.status_code == 200
+
+    runs = (await db.execute("SELECT * FROM sqml_runs ORDER BY id")).rows
+    assert len(runs) == 2
+
+    deployments = (await db.execute("SELECT * FROM sqml_deployments ORDER BY id")).rows
+    assert len(deployments) == 2
+    assert not deployments[0]["active"]
+    assert deployments[0]["model_id"] == 1
+    assert deployments[1]["active"]
+    assert deployments[1]["model_id"] == 2
+
+
+@pytest.mark.asyncio
+async def test_sqml_train_worse_model(datasette: Datasette, faker: Faker) -> None:
+    db: Database = datasette.get_database("sqml")
+
+    experiment_name = faker.bs()
+    prediction_type = "regression"
     algorithm = "linear_regression"
+    dataset = f"data_{prediction_type}"
+    target = "target"
     query = f"""
         SELECT sqml_train(
             '{experiment_name}',
@@ -310,7 +342,16 @@ async def test_sqml_train_worse_model(datasette: Datasette, faker: Faker) -> Non
     response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
     assert response.status_code == 200
 
-    db: Database = datasette.get_database("sqml")
+    await db.execute_write(
+        """
+        UPDATE sqml_metrics
+        SET value = 1.0
+        WHERE id = 1 AND name = 'score'
+        """
+    )
+
+    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    assert response.status_code == 200
 
     runs = (await db.execute("SELECT * FROM sqml_runs ORDER BY id")).rows
     assert len(runs) == 2
