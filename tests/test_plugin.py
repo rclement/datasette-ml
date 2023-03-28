@@ -247,17 +247,21 @@ async def test_sqml_train(
             )
         ).rows
     }
+
+    assert isinstance(metrics["score"], float)
     if prediction_type == "regression":
-        assert len(metrics.keys()) == 3
+        assert len(metrics.keys()) == 4
         assert isinstance(metrics["r2"], float)
         assert isinstance(metrics["mae"], float)
         assert isinstance(metrics["rmse"], float)
+        assert metrics["score"] == metrics["r2"]
     else:
-        assert len(metrics.keys()) == 4
+        assert len(metrics.keys()) == 5
         assert isinstance(metrics["accuracy"], float)
         assert isinstance(metrics["f1"], float)
         assert isinstance(metrics["precision"], float)
         assert isinstance(metrics["recall"], float)
+        assert metrics["score"] == metrics["accuracy"]
 
     deployment = (
         await db.execute(

@@ -198,9 +198,9 @@ class SQML:
         estimator = AlgorithmHandler()
         estimator.fit(X_train, y_train)
         y_pred = estimator.predict(X_test)
-        # score = estimator.score(X_test, y_test)
+        score = estimator.score(X_test, y_test)
 
-        model_metrics = {}
+        model_metrics = dict(score=score)
         if prediction_type == "classification":
             model_metrics["accuracy"] = metrics.accuracy_score(y_test, y_pred)
             model_metrics["f1"] = metrics.f1_score(y_test, y_pred, average="weighted")
@@ -237,7 +237,6 @@ class SQML:
                     (model_id, k, v),
                 )
 
-            score_metric = "f1" if prediction_type == "classification" else "r2"
             current_deployment = self.conn.execute(
                 """
                 SELECT
@@ -249,9 +248,9 @@ class SQML:
                 WHERE
                     sqml_deployments.experiment_id = ?
                     AND sqml_deployments.active = TRUE
-                    AND sqml_metrics.name = ?
+                    AND sqml_metrics.name = 'score'
                 """,
-                (experiment_id, score_metric),
+                (experiment_id,),
             ).fetchone()
 
             deployment_id = (
@@ -262,7 +261,7 @@ class SQML:
                 current_deployment["score"] if current_deployment else initial_score
             )
 
-            if model_metrics[score_metric] > current_score:
+            if score > current_score:
                 deployment = self.conn.execute(
                     """
                     INSERT INTO sqml_deployments(experiment_id, model_id)
