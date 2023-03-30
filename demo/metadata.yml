@@ -1,0 +1,3 @@
+plugins:
+  datasette-ml:
+    db: sqml
