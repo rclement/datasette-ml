@@ -59,11 +59,14 @@ SELECT
     sqml_runs.created_at AS start_time,
     sqml_runs.status AS status,
     sqml_runs.algorithm AS algorithm,
-    json_group_object(
-        sqml_metrics.name, sqml_metrics.value
-    ) FILTER (
-        WHERE sqml_metrics.name = 'score'
-    ) -> '$.score' AS score
+    json_extract(
+        json_group_object(
+            sqml_metrics.name, sqml_metrics.value
+        ) FILTER (
+            WHERE sqml_metrics.name = 'score'
+        ),
+        '$.score'
+    ) AS score
 FROM
   sqml_runs
   JOIN sqml_experiments ON sqml_experiments.id = sqml_runs.experiment_id
