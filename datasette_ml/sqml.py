@@ -9,7 +9,15 @@ import numpy as np
 import pandas as pd
 import sklearn
 
-from sklearn import datasets, linear_model, metrics, model_selection, svm
+from sklearn import (
+    datasets,
+    linear_model,
+    metrics,
+    model_selection,
+    pipeline,
+    preprocessing,
+    svm,
+)
 
 
 class SQML:
@@ -108,8 +116,8 @@ class SQML:
         algorithm_handlers = {
             "linear_regression": linear_model.LinearRegression,
             "logistic_regression": linear_model.LogisticRegression,
-            "svr": svm.LinearSVR,
-            "svc": svm.LinearSVC,
+            "svr": svm.SVR,
+            "svc": svm.SVC,
         }
 
         split_handlers = {
@@ -195,7 +203,12 @@ class SQML:
         X_train, y_train = X.iloc[train_indices], y.iloc[train_indices]
         X_test, y_test = X.iloc[test_indices], y.iloc[test_indices]
 
-        estimator = AlgorithmHandler()
+        estimator = pipeline.Pipeline(
+            [
+                ("scaler", preprocessing.StandardScaler()),
+                ("model", AlgorithmHandler()),
+            ]
+        )
         estimator.fit(X_train, y_train)
         y_pred = estimator.predict(X_test)
         score = estimator.score(X_test, y_test)
