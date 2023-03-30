@@ -62,8 +62,8 @@ SELECT
     json_group_object(
         sqml_metrics.name, sqml_metrics.value
     ) FILTER (
-        WHERE sqml_metrics.name IS NOT NULL
-    ) AS metrics
+        WHERE sqml_metrics.name = 'score'
+    ) -> '$.score' AS score
 FROM
   sqml_runs
   JOIN sqml_experiments ON sqml_experiments.id = sqml_runs.experiment_id
