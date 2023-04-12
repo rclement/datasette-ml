@@ -16,7 +16,7 @@ platform to train, evaluate and make predictions from machine learning models.
 Some breaking changes might happen between releases before reaching a stable version.
 Use it at your own risks!
 
-![Datasette ML Demo](https://raw.githubusercontent.com/rclement/datasette-ml/master/demo/datasette-ml-demo.png)
+<!-- ![Datasette ML Demo](https://raw.githubusercontent.com/rclement/datasette-ml/master/demo/datasette-ml-demo.png) -->
 
 ## Installation
 
