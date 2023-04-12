@@ -11,6 +11,7 @@ import sklearn
 
 from sklearn import (
     datasets,
+    dummy,
     linear_model,
     metrics,
     model_selection,
@@ -114,17 +115,23 @@ class SQML:
         split_strategy: str = "shuffle",
     ) -> str:
         algorithm_handlers = {
-            "linear_regression": linear_model.LinearRegression,
-            "logistic_regression": linear_model.LogisticRegression,
-            "svr": svm.SVR,
-            "svc": svm.SVC,
+            "regression": {
+                "dummy": dummy.DummyRegressor,
+                "linear_regression": linear_model.LinearRegression,
+                "svr": svm.SVR,
+            },
+            "classification": {
+                "dummy": dummy.DummyClassifier,
+                "logistic_regression": linear_model.LogisticRegression,
+                "svc": svm.SVC,
+            },
         }
 
         split_handlers = {
             "shuffle": model_selection.ShuffleSplit,
         }
 
-        available_prediction_types = {"regression", "classification"}
+        available_prediction_types = algorithm_handlers.keys()
         if prediction_type not in available_prediction_types:
             return json.dumps(
                 {
@@ -132,11 +139,12 @@ class SQML:
                 }
             )
 
-        AlgorithmHandler = algorithm_handlers.get(algorithm)
+        prediction_type_algorithms = algorithm_handlers[prediction_type]
+        AlgorithmHandler = prediction_type_algorithms.get(algorithm)
         if AlgorithmHandler is None:
             return json.dumps(
                 {
-                    "error": f"Unknown algorithm '{algorithm}'. Available algorithms: {', '.join(algorithm_handlers.keys())}"
+                    "error": f"Unknown algorithm '{algorithm}'. Available algorithms for prediction type '{prediction_type}': {', '.join(prediction_type_algorithms.keys())}"
                 }
             )
 

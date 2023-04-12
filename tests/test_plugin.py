@@ -186,8 +186,10 @@ async def test_sqml_load_dataset_unknown(datasette: Datasette) -> None:
 @pytest.mark.parametrize(
     ("prediction_type", "algorithm"),
     [
+        ("regression", "dummy"),
         ("regression", "linear_regression"),
         ("regression", "svr"),
+        ("classification", "dummy"),
         ("classification", "logistic_regression"),
         ("classification", "svc"),
     ],
@@ -470,6 +472,35 @@ async def test_sqml_train_existing_experiment_wrong_prediction_type(
     assert response.status_code == 200
 
     prediction_type = "classification"
+    algorithm = "logistic_regression"
+    query = f"""
+        SELECT sqml_train(
+            '{experiment_name}',
+            '{prediction_type}',
+            '{algorithm}',
+            '{dataset}',
+            '{target}'
+        ) AS training;
+        """
+    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    assert response.status_code == 200
+
+    rows = response.json()
+    assert len(rows) == 1
+
+    training = json.loads(rows[0]["training"])
+    assert "error" in training.keys()
+
+
+@pytest.mark.asyncio
+async def test_sqml_train_wrong_prediction_type_algorithm(
+    datasette: Datasette, faker: Faker
+) -> None:
+    experiment_name = faker.bs()
+    prediction_type = "regression"
+    algorithm = "logistic_regression"
+    dataset = f"data_{prediction_type}"
+    target = "target"
     query = f"""
         SELECT sqml_train(
             '{experiment_name}',
