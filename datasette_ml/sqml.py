@@ -141,6 +141,16 @@ class SQML:
             "classification": {
                 "dummy": dummy.DummyClassifier,
                 "logistic_regression": linear_model.LogisticRegression,
+                "sgd": linear_model.SGDClassifier,
+                "ridge": linear_model.RidgeClassifier,
+                "ridge_cv": linear_model.RidgeClassifierCV,
+                "decision_tree": tree.DecisionTreeClassifier,
+                "ada_boost": ensemble.AdaBoostClassifier,
+                "bagging": ensemble.BaggingClassifier,
+                "gradient_boosting": ensemble.GradientBoostingClassifier,
+                "random_forest": ensemble.RandomForestClassifier,
+                "knn": neighbors.KNeighborsClassifier,
+                "mlp": neural_network.MLPClassifier,
                 "svc": svm.SVC,
             },
         }
