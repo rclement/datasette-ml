@@ -12,12 +12,16 @@ import sklearn
 from sklearn import (
     datasets,
     dummy,
+    ensemble,
     linear_model,
     metrics,
     model_selection,
+    neighbors,
+    neural_network,
     pipeline,
     preprocessing,
     svm,
+    tree,
 )
 
 
@@ -118,6 +122,20 @@ class SQML:
             "regression": {
                 "dummy": dummy.DummyRegressor,
                 "linear_regression": linear_model.LinearRegression,
+                "sgd": linear_model.SGDRegressor,
+                "ridge": linear_model.Ridge,
+                "ridge_cv": linear_model.RidgeCV,
+                "elastic_net": linear_model.ElasticNet,
+                "elastic_net_cv": linear_model.ElasticNetCV,
+                "lasso": linear_model.Lasso,
+                "lasso_cv": linear_model.LassoCV,
+                "decision_tree": tree.DecisionTreeRegressor,
+                "ada_boost": ensemble.AdaBoostRegressor,
+                "bagging": ensemble.BaggingRegressor,
+                "gradient_boosting": ensemble.GradientBoostingRegressor,
+                "random_forest": ensemble.RandomForestRegressor,
+                "knn": neighbors.KNeighborsRegressor,
+                "mlp": neural_network.MLPRegressor,
                 "svr": svm.SVR,
             },
             "classification": {
