@@ -1,7 +1,6 @@
 import sqlite3
 import typing as t
 
-from pathlib import Path
 from datasette import hookimpl
 from datasette.database import Database
 
@@ -12,24 +11,19 @@ if t.TYPE_CHECKING:  # pragma: no cover
     from datasette.app import Datasette
 
 
-@hookimpl
-def startup(datasette: "Datasette") -> t.Callable[[], t.Coroutine[t.Any, t.Any, None]]:
-    async def init() -> None:
-        config = datasette.plugin_config("datasette-ml") or {}
-        db_name = config.get("db", "sqml")
-        db: Database = datasette.get_database(db_name)
-        schema_sql = (Path(__file__).parent / "sql" / "schema.sql").read_text()
-        await db.execute_write_script(schema_sql)
+sqml = SQML()
 
-    return init
+
+@hookimpl
+def startup(datasette: "Datasette") -> None:
+    config = datasette.plugin_config("datasette-ml") or {}
+    db_name = config.get("db", "sqml")
+    db: Database = datasette.get_database(db_name)
+    sqml.setup_schema(db.connect(True))
 
 
 @hookimpl
 def prepare_connection(
     conn: sqlite3.Connection, database: str, datasette: "Datasette"
 ) -> None:
-    db: Database = datasette.get_database("sqml")
-
-    sqml = SQML()
-    sqml.register(conn)
-    sqml.set_internal_connection(db.connect(True))
+    sqml.register_functions(conn)

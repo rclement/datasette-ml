@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import sklearn
 
+from pathlib import Path
 from sklearn import (
     datasets,
     dummy,
@@ -28,11 +29,13 @@ from sklearn import (
 class SQML:
     conn: sqlite3.Connection
 
-    def set_internal_connection(self, conn: sqlite3.Connection) -> None:
+    def setup_schema(self, conn: sqlite3.Connection) -> None:
         self.conn = conn
         self.conn.row_factory = sqlite3.Row
+        schema_sql = (Path(__file__).parent / "sql" / "schema.sql").read_text()
+        self.conn.executescript(schema_sql)
 
-    def register(self, conn: sqlite3.Connection) -> None:
+    def register_functions(self, conn: sqlite3.Connection) -> None:
         conn.create_function(
             "sqml_python_version", 0, self.python_version, deterministic=True
         )
