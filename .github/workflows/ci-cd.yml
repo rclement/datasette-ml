@@ -99,12 +99,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install --upgrade pipenv
-          pipenv install --dev --deploy
+          python -m pip install --upgrade poetry
+          poetry install
       - name: Deploy to Vercel
         run: |-
           VERCEL_ALIAS=${GITHUB_REF_SLUG_URL}-${DEMO_BASE_URL_PREVIEW}
-          VERCEL_URL=$(pipenv run datasette publish vercel demo/sqml.db \
+          VERCEL_URL=$(poetry run datasette publish vercel demo/sqml.db \
             --metadata demo/metadata.yml \
             --install=datasette-block-robots \
             --install=https://github.com/rclement/datasette-ml/archive/${GITHUB_SHA}.zip \
@@ -138,11 +138,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install --upgrade pipenv
-          pipenv install --dev --deploy
+          python -m pip install --upgrade poetry
+          poetry install
       - name: Deploy to Vercel
         run: |-
-          pipenv run datasette publish vercel demo/sqml.db \
+          poetry run datasette publish vercel demo/sqml.db \
             --metadata demo/metadata.yml \
             --install=datasette-block-robots \
             --install=https://github.com/rclement/datasette-ml/archive/${GITHUB_SHA}.zip \
