@@ -10,11 +10,8 @@ def main() -> None:
     db = sqlite_utils.Database(db_path)
 
     sqml = SQML()
-    sqml.register(db.conn)
-    sqml.set_internal_connection(db.conn)
-
-    schema_sql = (Path("datasette_ml") / "sql" / "schema.sql").read_text()
-    db.executescript(schema_sql)
+    sqml.setup_schema(db.conn)
+    sqml.register_functions(db.conn)
 
     samples_sql = (Path(__file__).parent / "samples.sql").read_text()
     db.executescript(samples_sql)
