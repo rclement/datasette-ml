@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "datasette-ml"
 version = "0.0.0"
-description = "A Datasette plugin providing an MLOps platform to train, eval and predict ML models"
+description = "A Datasette plugin providing an MLOps platform to train, eval and predict machine learning models"
 repository = "https://github.com/rclement/datasette-ml"
 authors = ["Romain Clement"]
 license = "Apache License, Version 2.0"
