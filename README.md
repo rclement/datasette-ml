@@ -288,7 +288,8 @@ pytest -v --cov=datasette_ml --cov=tests --cov-branch --cov-report=term-missing 
 With the developmnent environment setup, you can run the demo locally:
 
 ```bash
-datasette sqml.db --create
+python demo/generate.py
+datasette --metadata demo/metadata.yml demo/sqml.db
 ```
 
 ## Inspiration
