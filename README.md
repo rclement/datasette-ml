@@ -5,9 +5,9 @@
 Datasette ML is a [Datasette](https://datasette.io) plugin providing an MLOps
 platform to train, evaluate and make predictions from machine learning models.
 
-<!-- [![PyPI](https://img.shields.io/pypi/v/datasette-ml.svg)](https://pypi.org/project/datasette-ml/) -->
+[![PyPI](https://img.shields.io/pypi/v/datasette-ml.svg)](https://pypi.org/project/datasette-ml/)
 [![CI/CD](https://github.com/rclement/datasette-ml/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/rclement/datasette-ml/actions/workflows/ci-cd.yml)
-<!-- [![Coverage Status](https://img.shields.io/codecov/c/github/rclement/datasette-ml)](https://codecov.io/gh/rclement/datasette-ml) -->
+[![Coverage Status](https://img.shields.io/codecov/c/github/rclement/datasette-ml)](https://codecov.io/gh/rclement/datasette-ml)
 [![License](https://img.shields.io/github/license/rclement/datasette-ml)](https://github.com/rclement/datasette-ml/blob/master/LICENSE)
 
 <!-- Try out a live demo at [https://datasette-ml-demo.vercel.app](https://datasette-ml-demo.vercel.app/-/dashboards) -->

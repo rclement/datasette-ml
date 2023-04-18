@@ -38,11 +38,11 @@ jobs:
         run: |
           poetry run pytest -v --cov=datasette_ml --cov=tests --cov-branch --cov-report=term-missing tests
           poetry run coverage xml
-      # - name: Publish code coverage to Codecov
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     file: ./coverage.xml
+      - name: Publish code coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
 
   publish-package-test:
     runs-on: ubuntu-latest
