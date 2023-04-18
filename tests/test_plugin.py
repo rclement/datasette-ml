@@ -5,6 +5,7 @@ import typing as t
 import sklearn
 import pytest
 
+from urllib.parse import urlencode
 from pathlib import Path
 from datasette.app import Datasette
 from datasette.database import Database
@@ -112,7 +113,8 @@ async def test_sqml_python_version(datasette: Datasette) -> None:
     query = """
         SELECT sqml_python_version() AS version;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -125,7 +127,8 @@ async def test_sqml_sklearn_version(datasette: Datasette) -> None:
     query = """
         SELECT sqml_sklearn_version() AS version;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -145,7 +148,8 @@ async def test_sqml_load_dataset(datasette: Datasette, dataset: str) -> None:
     query = f"""
         SELECT sqml_load_dataset('{dataset}') AS info;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -169,7 +173,8 @@ async def test_sqml_load_dataset_unknown(datasette: Datasette) -> None:
     query = """
         SELECT sqml_load_dataset('unknown') AS info;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -233,7 +238,8 @@ async def test_sqml_train(
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -350,7 +356,8 @@ async def test_sqml_train_better_model(datasette: Datasette, faker: Faker) -> No
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     await db.execute_write(
@@ -361,7 +368,8 @@ async def test_sqml_train_better_model(datasette: Datasette, faker: Faker) -> No
         """
     )
 
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -399,7 +407,8 @@ async def test_sqml_train_worse_model(datasette: Datasette, faker: Faker) -> Non
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     await db.execute_write(
@@ -410,7 +419,8 @@ async def test_sqml_train_worse_model(datasette: Datasette, faker: Faker) -> Non
         """
     )
 
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -446,9 +456,11 @@ async def test_sqml_train_existing_experiment(
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     db: Database = datasette.get_database("sqml")
@@ -492,7 +504,8 @@ async def test_sqml_train_existing_experiment_wrong_prediction_type(
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     prediction_type = "classification"
@@ -506,7 +519,8 @@ async def test_sqml_train_existing_experiment_wrong_prediction_type(
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -534,7 +548,8 @@ async def test_sqml_train_wrong_prediction_type_algorithm(
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -562,7 +577,8 @@ async def test_sqml_train_unknown_prediction_type(
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -588,7 +604,8 @@ async def test_sqml_train_unknown_algorithm(datasette: Datasette, faker: Faker) 
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -614,7 +631,8 @@ async def test_sqml_train_unknown_dataset(datasette: Datasette, faker: Faker) ->
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -640,7 +658,8 @@ async def test_sqml_train_unknown_target(datasette: Datasette, faker: Faker) -> 
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -672,7 +691,8 @@ async def test_sqml_train_unknown_split_strategy(
             '{split_strategy}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -707,7 +727,8 @@ async def test_sqml_train_out_of_range_test_size(
             '{split_strategy}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -743,7 +764,8 @@ async def test_sqml_predict(
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     db: Database = datasette.get_database("sqml")
@@ -764,7 +786,8 @@ async def test_sqml_predict(
             '{features}'
         ) AS prediction;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -785,7 +808,8 @@ async def test_sqml_predict_unknown_experiment(
             '{{}}'
         ) AS prediction;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -815,7 +839,8 @@ async def test_sqml_predict_no_deployment(datasette: Datasette, faker: Faker) ->
             '{{}}'
         ) AS prediction;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -851,7 +876,8 @@ async def test_sqml_predict_batch(
             '{target}'
         ) AS training;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     db: Database = datasette.get_database("sqml")
@@ -860,16 +886,20 @@ async def test_sqml_predict_batch(
         "count"
     ]
 
-    features = json.dumps(
-        [{k: v for k, v in dict(row).items() if k != target} for row in data_rows]
+    features = ", ".join(
+        f"'{k}', [{k}]" for k in dict(data_rows[0]).keys() if k != target
     )
     query = f"""
         SELECT sqml_predict_batch(
             '{experiment_name}',
-            '{features}'
-        ) AS predictions;
+            json_group_array(
+                json_object({features})
+            )
+        ) AS predictions
+        FROM {dataset};
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -892,7 +922,8 @@ async def test_sqml_predict_batch_unknown_experiment(
             '[]'
         ) AS prediction;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
@@ -924,7 +955,8 @@ async def test_sqml_predict_batch_no_deployment(
             '[]'
         ) AS prediction;
         """
-    response = await datasette.client.get(f"/sqml.json?sql={query}&_shape=array")
+    qs = urlencode({"sql": query, "_shape": "array"})
+    response = await datasette.client.get(f"/sqml.json?{qs}")
     assert response.status_code == 200
 
     rows = response.json()
