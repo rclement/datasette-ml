@@ -273,6 +273,24 @@ rich = ["rich"]
 test = ["beautifulsoup4 (>=4.8.1)", "black (==22.10.0)", "blacken-docs (==1.12.1)", "cogapp (>=3.3.0)", "pytest (>=5.2.2)", "pytest-asyncio (>=0.17)", "pytest-timeout (>=1.4.2)", "pytest-xdist (>=2.2.1)", "trustme (>=0.7)"]
 
 [[package]]
+name = "datasette-publish-vercel"
+version = "0.14.2"
+description = "Datasette plugin for publishing data using Vercel"
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "datasette-publish-vercel-0.14.2.tar.gz", hash = "sha256:9632bbed0012941bf171510ea39d79ae8db0977d99300f1c36b176ea00cc05d5"},
+    {file = "datasette_publish_vercel-0.14.2-py3-none-any.whl", hash = "sha256:5c6ba4ce54898c79c62eeeb27b79437773e569fbc2da3fba8a3f9dd2cb8908f6"},
+]
+
+[package.dependencies]
+datasette = ">=0.59"
+
+[package.extras]
+test = ["pytest"]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.1.1"
 description = "Backport of PEP 654 (exception groups)"
@@ -1260,4 +1278,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "0245729a6d430aad56c2932fb95b9348c9ce3ef10db4d183a46f5136cf470f4d"
+content-hash = "67d4f0d6c644c679ffa21869db4c2a685ec228d8cd596357f2897f7e74ac81bd"
