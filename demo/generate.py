@@ -1,7 +1,7 @@
 import sqlite_utils
 
 from pathlib import Path
-from datasette_ml.sqml import SQML
+from sqlite_ml.sqml import SQML
 
 
 def main() -> None:

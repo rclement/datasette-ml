@@ -11,8 +11,7 @@ packages = [{include = "datasette_ml"}]
 [tool.poetry.dependencies]
 python = "^3.8.1"
 datasette = "*"
-scikit-learn = "*"
-pandas = "*"
+sqlite-ml = "==0.1.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "==23.3.0"
