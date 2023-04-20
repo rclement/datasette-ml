@@ -1119,6 +1119,22 @@ files = [
 test = ["pytest"]
 
 [[package]]
+name = "sqlite-ml"
+version = "0.1.1"
+description = "An SQLite extension for machine learning"
+category = "main"
+optional = false
+python-versions = ">=3.8.1,<4.0.0"
+files = [
+    {file = "sqlite_ml-0.1.1-py3-none-any.whl", hash = "sha256:acba79d3fcffae166988c6540c69679d8b9ce23bc3ac849b64e5a4e8c997aacd"},
+    {file = "sqlite_ml-0.1.1.tar.gz", hash = "sha256:57950f8ab8d86b40ea0c6a2677bf21cb3a24035231252ec50ad1b3075b6b201d"},
+]
+
+[package.dependencies]
+pandas = "*"
+scikit-learn = "*"
+
+[[package]]
 name = "sqlite-utils"
 version = "3.30"
 description = "CLI tool and Python utility functions for manipulating SQLite databases"
@@ -1244,4 +1260,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "07dcf87e2588f09d31eb94d3836bb1713fff10192c52623b8b37cadb5056636e"
+content-hash = "0245729a6d430aad56c2932fb95b9348c9ce3ef10db4d183a46f5136cf470f4d"

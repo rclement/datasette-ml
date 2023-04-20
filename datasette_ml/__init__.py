@@ -4,7 +4,7 @@ import typing as t
 from datasette import hookimpl
 from datasette.database import Database
 
-from .sqml import SQML
+from sqlite_ml.sqml import SQML
 
 
 if t.TYPE_CHECKING:  # pragma: no cover
