@@ -5,6 +5,8 @@
 Datasette ML is a [Datasette](https://datasette.io) plugin providing an MLOps
 platform to train, evaluate and make predictions from machine learning models.
 
+All the underlying features are provided by [`sqlite-ml`](https://github.com/rclement/sqlite-ml).
+
 [![PyPI](https://img.shields.io/pypi/v/datasette-ml.svg)](https://pypi.org/project/datasette-ml/)
 [![CI/CD](https://github.com/rclement/datasette-ml/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/rclement/datasette-ml/actions/workflows/ci-cd.yml)
 [![Coverage Status](https://img.shields.io/codecov/c/github/rclement/datasette-ml)](https://codecov.io/gh/rclement/datasette-ml)
@@ -297,6 +299,7 @@ datasette --metadata demo/metadata.yml demo/sqml.db
 All the things on the internet that have been inspiring this project:
 
 - [PostgresML](https://postgresml.org)
+- [MLFlow](https://mlflow.org)
 - [SQLite  Run-Time Loadable Extensions](https://www.sqlite.org/loadext.html)
 - [Alex Garcia's `sqlite-loadable-rs`](https://github.com/asg017/sqlite-loadable-rs)
 - [Alex Garcia's SQLite extensions](https://github.com/asg017)
