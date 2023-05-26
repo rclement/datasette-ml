@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.2] - 2023-05-26
+### Fixed
+- RMSE metric for regression tasks with `sqlite-ml` 0.1.2
+
 ### Internal
 - Add Renovate configuration
 - Remove `importlib-metadata` dev dependency
@@ -20,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release of `datasette-ml`
 
-[Unreleased]: https://github.com/rclement/datasette-ml/compare/0.1.1...HEAD
+[Unreleased]: https://github.com/rclement/datasette-ml/compare/0.1.2...HEAD
+[0.1.2]: https://github.com/rclement/datasette-ml/compare/0.1.1...0.1.2
 [0.1.1]: https://github.com/rclement/datasette-ml/compare/0.1.0...0.1.1
 [0.1.0]: https://github.com/rclement/datasette-ml/releases/tag/0.1.0
