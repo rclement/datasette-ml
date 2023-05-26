@@ -1132,14 +1132,14 @@ test = ["pytest"]
 
 [[package]]
 name = "sqlite-ml"
-version = "0.1.1"
+version = "0.1.2"
 description = "An SQLite extension for machine learning"
 category = "main"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "sqlite_ml-0.1.1-py3-none-any.whl", hash = "sha256:acba79d3fcffae166988c6540c69679d8b9ce23bc3ac849b64e5a4e8c997aacd"},
-    {file = "sqlite_ml-0.1.1.tar.gz", hash = "sha256:57950f8ab8d86b40ea0c6a2677bf21cb3a24035231252ec50ad1b3075b6b201d"},
+    {file = "sqlite_ml-0.1.2-py3-none-any.whl", hash = "sha256:5c2fb47bd65e55e5917c93aa668742c1422949d3c2c7394e2add5ddf78950370"},
+    {file = "sqlite_ml-0.1.2.tar.gz", hash = "sha256:99bf8011fdd20e481240de3bb73da4ed3adebf3fe90918eef740f0b7b510d5e8"},
 ]
 
 [package.dependencies]
@@ -1257,4 +1257,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "1f4b408b2c402e4670262713a3562fbab7b09c9f14d0a3ef77ab0cfaf9beac56"
+content-hash = "f3f30dfc26668039044154d5f02b30982cdca144a47100bde4196db34ab8da11"
