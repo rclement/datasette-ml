@@ -115,11 +115,11 @@ jobs:
 
   deploy-demo:
     runs-on: ubuntu-latest
-    needs: [deploy-demo-setup]
+    if: ${{ github.event_name == 'push' && !contains(github.ref, 'tags') }}
 
     environment:
-      name: ${{ steps.output_step.outputs.deployment_name }}
-      url: ${{ steps.output_step.outputs.deployment_url }}
+      name: ${{ steps.deployment.outputs.deployment_name }}
+      url: ${{ steps.deployment.outputs.deployment_url }}
 
     steps:
       - name: Inject slug/short variables
@@ -127,7 +127,7 @@ jobs:
       - name: Set demo folder base url variable
         run: echo "DEMO_FOLDER_URL=https://raw.githubusercontent.com/rclement/datasette-ml/${GITHUB_REF_NAME}/demo" >> ${GITHUB_ENV}
       - name: Set deployment output variables
-        id: output_step
+        id: deployment
         run: |
           echo "deployment_name=preview/${GITHUB_REF_SLUG_URL}" >> $GITHUB_OUTPUT
           echo "deployment_url=https://lite.datasette.io/?install=datasette-ml&url=${DEMO_FOLDER_URL}/sqml.db&metadata=${DEMO_FOLDER_URL}/metadata.yml" >> $GITHUB_OUTPUT
