@@ -119,7 +119,7 @@ jobs:
     if: ${{ github.event_name == 'push' && !contains(github.ref, 'tags') }}
 
     environment:
-      name: ${{ steps.deployment.outputs.deployment_name }}
+      name: ${{ jobs.deploy-demo.deployment.outputs.deployment_name }}
       url: ${{ steps.deployment.outputs.deployment_url }}
 
     steps:
