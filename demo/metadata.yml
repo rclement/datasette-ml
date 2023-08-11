@@ -1,3 +1,18 @@
+title: Datasette ML Demo
+about: rclement/datasette-ml
+about_url: https://github.com/rclement/datasette-ml
+description_html: |-
+  <div class="message-info">
+    <p>Welcome to the <a href="https://github.com/rclement/datasette-ml">Datasette ML plugin</a> demo!</p>
+    <ul class="bullets">
+      <li>Train a machine learning model using the <a href="https://github.com/rclement/datasette-ml#sql-functions"><code>sqml_train</code></a> SQL function</li>
+      <li>Run predictions from a machine learning model using the <a href="https://github.com/rclement/datasette-ml#sql-functions"><code>sqml_predict</code></a> SQL function</li>
+      <li>Run batch predictions from a machine learning model using the <a href="https://github.com/rclement/datasette-ml#sql-functions"><code>sqml_predict_batch</code></a> SQL function</li>
+      <li>Checkout the <a href="/sqml/sqml_runs_overview">machine learning training runs overview</a></li>
+      <li>Browse the <a href="/sqml">SQML database</a> to see how things work under the hood</li>
+    </ul>
+  </div>
+
 plugins:
   datasette-ml:
     db: sqml
