@@ -117,6 +117,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [deploy-demo-setup]
 
+    outputs:
+      github_ref_slug: ${{ steps.output_step.outputs.github_ref_slug }}
+      deployment_url: ${{ steps.output_step.outputs.deployment_url }}
+
     environment:
       name: preview/${{ steps.output_step.outputs.github_ref_slug }}
       url: ${{ steps.output_step.outputs.deployment_url }}
