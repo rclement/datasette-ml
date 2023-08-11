@@ -115,6 +115,7 @@ jobs:
 
   deploy-demo:
     runs-on: ubuntu-latest
+    needs: test
     if: ${{ github.event_name == 'push' && !contains(github.ref, 'tags') }}
 
     environment:
