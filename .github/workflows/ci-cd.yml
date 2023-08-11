@@ -120,7 +120,7 @@ jobs:
 
     environment:
       name: preview/${{ github.ref_name }}
-      url: ${{ job.deploy-demo.deployment.outputs.deployment_url }}
+      url: ${{ steps.deployment.outputs.deployment_url }}
 
     steps:
       - name: Set demo folder base url variable
