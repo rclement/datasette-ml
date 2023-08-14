@@ -5,11 +5,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-# env:
-#   VERCEL_PROJECT: datasette-ml-demo
-#   DEMO_BASE_URL_PREVIEW: dml-demo.vercel.app
-#   DEMO_BASE_URL_PRODUCTION: datasette-ml-demo.vercel.app
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -49,70 +44,6 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
 
-  # deploy-demo-setup:
-  #   name: Deployment setup
-  #   runs-on: ubuntu-latest
-  #   needs: test
-
-  #   outputs:
-  #     github_ref_slug: ${{ steps.output_step.outputs.github_ref_slug }}
-  #     deployment_url: ${{ steps.output_step.outputs.deployment_url }}
-
-  #   steps:
-  #     - name: Inject slug/short variables
-  #       uses: rlespinasse/github-slug-action@v4
-  #     - name: Set preview deployment url variable
-  #       if: ${{ !contains(github.ref, 'main') && !contains(github.ref, 'tags') }}
-  #       run: echo "DEPLOYMENT_URL=https://${GITHUB_REF_SLUG_URL}-${DEMO_BASE_URL_PREVIEW}" >> ${GITHUB_ENV}
-  #     - name: Set production deployment url variable
-  #       if: ${{ contains(github.ref, 'main') }}
-  #       run: echo "DEPLOYMENT_URL=https://${DEMO_BASE_URL_PRODUCTION}" >> ${GITHUB_ENV}
-  #     - id: output_step
-  #       run: |
-  #         echo "github_ref_slug=${GITHUB_REF_SLUG_URL}" >> $GITHUB_OUTPUT
-  #         echo "deployment_url=${DEPLOYMENT_URL}" >> $GITHUB_OUTPUT
-
-  # deploy-demo-preview:
-  #   runs-on: ubuntu-latest
-  #   needs: [deploy-demo-setup]
-  #   if: ${{ github.event_name == 'push' && !contains(github.ref, 'main') && !contains(github.ref, 'tags') }}
-
-  #   environment:
-  #     name: preview/${{ needs.deploy-demo-setup.outputs.github_ref_slug }}
-  #     url: ${{ needs.deploy-demo-setup.outputs.deployment_url }}
-
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Inject slug/short variables
-  #       uses: rlespinasse/github-slug-action@v4
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: "3.10"
-  #     - name: Cache Python modules
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: ~/.cache/pip
-  #         key: ${{ runner.os }}-pip-${{ hashFiles('**/Pipfile.lock') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-pip-
-  #     - name: Install dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         python -m pip install --upgrade poetry
-  #         poetry install
-  #     - name: Deploy to Vercel
-  #       run: |-
-  #         VERCEL_ALIAS=${GITHUB_REF_SLUG_URL}-${DEMO_BASE_URL_PREVIEW}
-  #         VERCEL_URL=$(poetry run datasette publish vercel demo/sqml.db \
-  #           --metadata demo/metadata.yml \
-  #           --install=datasette-block-robots \
-  #           --install=https://github.com/rclement/datasette-ml/archive/${GITHUB_SHA}.zip \
-  #           --project=${VERCEL_PROJECT} \
-  #           --token=${{ secrets.VERCEL_TOKEN }} \
-  #           --no-prod)
-  #         vercel alias --token ${{ secrets.VERCEL_TOKEN }} set ${VERCEL_URL} ${VERCEL_ALIAS}
-
   deploy-demo:
     runs-on: ubuntu-latest
     needs: test
@@ -129,42 +60,6 @@ jobs:
         id: deployment
         run: |
           echo "deployment_url=https://lite.datasette.io/?install=datasette-ml&url=${DEMO_FOLDER_URL}/sqml.db&metadata=${DEMO_FOLDER_URL}/metadata.yml" >> $GITHUB_OUTPUT
-
-  # deploy-demo-production:
-  #   runs-on: ubuntu-latest
-  #   needs: [deploy-demo-setup]
-  #   if: contains(github.ref, 'main')
-
-  #   environment:
-  #     name: demo
-  #     url: ${{ needs.deploy-demo-setup.outputs.deployment_url }}
-
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: "3.10"
-  #     - name: Cache Python modules
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: ~/.cache/pip
-  #         key: ${{ runner.os }}-pip-${{ hashFiles('**/Pipfile.lock') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-pip-
-  #     - name: Install dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         python -m pip install --upgrade poetry
-  #         poetry install
-  #     - name: Deploy to Vercel
-  #       run: |-
-  #         poetry run datasette publish vercel demo/sqml.db \
-  #           --metadata demo/metadata.yml \
-  #           --install=datasette-block-robots \
-  #           --install=https://github.com/rclement/datasette-ml/archive/${GITHUB_SHA}.zip \
-  #           --project=${VERCEL_PROJECT} \
-  #           --token=${{ secrets.VERCEL_TOKEN }}
 
   publish-package-test:
     runs-on: ubuntu-latest
