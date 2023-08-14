@@ -15,6 +15,7 @@ sqlite-ml = "==0.1.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "==23.7.0"
+datasette-publish-vercel = "==0.14.2"
 faker = "==19.3.0"
 flake8 = "==6.1.0"
 mypy = "==1.5.0"
