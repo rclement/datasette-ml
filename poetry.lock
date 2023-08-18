@@ -1146,14 +1146,14 @@ scikit-learn = "*"
 
 [[package]]
 name = "sqlite-utils"
-version = "3.34"
+version = "3.35"
 description = "CLI tool and Python library for manipulating SQLite databases"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "sqlite-utils-3.34.tar.gz", hash = "sha256:4607683cbb32cfd4f3c63929045eaa020ab0221c5036f9bb41b7b25bc755cd23"},
-    {file = "sqlite_utils-3.34-py3-none-any.whl", hash = "sha256:234c2a3245e43ea7da588c1a879904e4b139f44ef621f5a9376d737a67e6077f"},
+    {file = "sqlite-utils-3.35.tar.gz", hash = "sha256:8f6fe7f8d12772cd5cf4594703a98dcd0c37c0fd6820dd20541ba74b9fca363a"},
+    {file = "sqlite_utils-3.35-py3-none-any.whl", hash = "sha256:d95591db18716ce7eac9a6359f4958598944d9e6640ccc42a2be6ab8456edddf"},
 ]
 
 [package.dependencies]
@@ -1256,4 +1256,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "981d71a7d58e7852c32879d336f40b40da6ddb7689d1127a66307db7bfaf142f"
+content-hash = "b1cb4e0b3718f489fdcb56f634bcc55d38efca20fdc5b7123aa7e9296746410d"
