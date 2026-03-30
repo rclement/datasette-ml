@@ -145,7 +145,7 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 name = "click-default-group"
 version = "1.2.4"
 description = "click_default_group"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7"
 files = [
@@ -158,21 +158,6 @@ click = "*"
 
 [package.extras]
 test = ["pytest"]
-
-[[package]]
-name = "click-default-group-wheel"
-version = "1.2.2"
-description = "Extends click.Group to invoke a command without explicit subcommand name (packaged as a wheel)"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "click-default-group-wheel-1.2.2.tar.gz", hash = "sha256:e90da42d92c03e88a12ed0c0b69c8a29afb5d36e3dc8d29c423ba4219e6d7747"},
-    {file = "click_default_group_wheel-1.2.2-py3-none-any.whl", hash = "sha256:1599b0b6e0ff63ee806c2cb76593cb8cc73e723cd53532c92bc496dc6fc90e5c"},
-]
-
-[package.dependencies]
-click = "*"
 
 [[package]]
 name = "colorama"
@@ -255,14 +240,14 @@ toml = ["tomli"]
 
 [[package]]
 name = "datasette"
-version = "0.64.3"
+version = "0.64.8"
 description = "An open source multi-tool for exploring and publishing data"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "datasette-0.64.3-py3-none-any.whl", hash = "sha256:5d1e2272c9b5321f4fe158da76c81897dc34ea8daef9633b7232437782026096"},
-    {file = "datasette-0.64.3.tar.gz", hash = "sha256:12ae15cd680d87f76a45ad30ff5b28a1fbf482e480dffdcfcea48be58b7a7c11"},
+    {file = "datasette-0.64.8-py3-none-any.whl", hash = "sha256:b31afc90e0493fd2199284e4e2ad4774edc95d80a623d28114cc82db48741461"},
+    {file = "datasette-0.64.8.tar.gz", hash = "sha256:ee54d87152b2e3e6d4552f157e3431918f5fa929c17afd0548b0d04becbd4c97"},
 ]
 
 [package.dependencies]
@@ -270,7 +255,7 @@ aiofiles = ">=0.4"
 asgi-csrf = ">=0.9"
 asgiref = ">=3.2.10"
 click = ">=7.1.1"
-click-default-group-wheel = ">=1.2.2"
+click-default-group = ">=1.2.3"
 httpx = ">=0.20"
 hupper = ">=1.9"
 itsdangerous = ">=1.1"
@@ -287,7 +272,7 @@ uvicorn = ">=0.11"
 [package.extras]
 docs = ["blacken-docs", "codespell", "furo (==2022.9.29)", "sphinx-autobuild", "sphinx-copybutton"]
 rich = ["rich"]
-test = ["beautifulsoup4 (>=4.8.1)", "black (==22.10.0)", "blacken-docs (==1.12.1)", "cogapp (>=3.3.0)", "pytest (>=5.2.2)", "pytest-asyncio (>=0.17)", "pytest-timeout (>=1.4.2)", "pytest-xdist (>=2.2.1)", "trustme (>=0.7)"]
+test = ["beautifulsoup4 (>=4.8.1)", "black (==24.4.2)", "blacken-docs (==1.12.1)", "cogapp (>=3.3.0)", "pytest (>=5.2.2)", "pytest-asyncio (>=0.17)", "pytest-timeout (>=1.4.2)", "pytest-xdist (>=2.2.1)", "trustme (>=0.7)"]
 
 [[package]]
 name = "exceptiongroup"
